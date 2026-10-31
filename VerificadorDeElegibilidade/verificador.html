@@ -1,0 +1,2586 @@
+﻿<!DOCTYPE html>
+
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Verificador de Elegibilidade PROAES</title>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.577.0/dist/umd/lucide.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+.hidden{display:none;}
+</style>
+<style id="design-azul-amarelo">
+/* paleta de cores da identidade visual */
+:root {
+  --brand-blue: #6E0745;
+  --brand-blue-dark: #6E0745;
+  --brand-yellow: #FBF1F6;
+  --brand-cream: #FFF2E4;
+  --brand-white: #FFFFFF;
+  --brand-text: #6E0745;
+  --brand-ink: #6E0745;
+  --brand-soft: #F6F8FC;
+  --brand-line: #C66AA2;
+  --brand-teal: #C66AA2;
+  --good: #00CF58;
+  --warn: #F6C341;
+  --bad: #FF3A3A;
+}
+
+/* reset geral e comportamento da página */
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--brand-text);
+  font-family: "Montserrat", Arial, sans-serif;
+  overflow-x: hidden;
+}
+/* ajuste visual de fundo para a área de papel */
+/* banner principal da página */
+.hero-site {
+  background: var(--brand-blue) !important;
+  color: #fff;
+  min-height: 545px;
+  overflow: hidden;
+  position: relative;
+}
+.hero-inner {
+  width: min(1180px, calc(100% - 48px));
+  min-height: 545px;
+  margin: 0 auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(330px, .85fr);
+  align-items: center;
+  gap: 38px;
+  padding: 24px 0 58px;
+}
+/* área de texto do hero */
+.hero-copy { position: relative; z-index: 3; max-width: 760px; }
+.hero-copy h1 {
+  margin: 0;
+  max-width: 880px;
+  color: var(--brand-cream);
+  font-family: "Anton", Impact, sans-serif;
+  font-size: clamp(54px, 7vw, 94px);
+  font-weight: 400;
+  line-height: .7;
+  letter-spacing: .01em;
+  text-transform: uppercase;
+}
+.hero-copy h1 span {
+  display: block;
+  white-space: nowrap;
+  margin-bottom: 40px;
+}
+.hero-copy h1 span:last-child {
+  margin-bottom: 0;
+}
+/* texto introdutório do banner */
+.hero-text {
+  max-width: 620px;
+  margin: 28px 0 24px;
+  color: #fff;
+  font-size: clamp(15px, 1.35vw, 1px);
+  line-height: 1.42;
+  font-weight: 500;
+}
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  background: var(--brand-yellow);
+  color: #173E6C;
+  padding: 13px 20px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 6px 0 rgba(0,0,0,.08);
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 0 rgba(0,0,0,.08); }
+.hero-cta svg { width: 17px; height: 17px; }
+/* área visual do lado direito do hero */
+.hero-art {
+  position: relative;
+  height: 430px;
+  align-self: end;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: visible;
+  transform: translateY(-16px);
+}
+.hero-illustration {
+  display: block;
+  width: min(100%, 620px);
+  height: auto;
+  max-height: 430px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 0 rgba(0,0,0,0.02));
+}
+
+/* área principal do conteúdo */
+.site-main {
+  width: 100%;
+  margin: -24px 0 0;
+  padding-top: 24px;
+  max-width: none !important;
+  background-color: #ffffff;
+  background-image:
+    linear-gradient(rgba(21, 59, 106, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 59, 106, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 24px;
+}
+.notice-card {
+  /* ajuste visual do aviso: diminui a distância do bloco azul para o card */
+  width: min(1080px, calc(100% - 48px));
+  margin: 24px auto 26px;
+  background: #FFF8E8;
+  border: 1px solid #F0D581;
+  border-left: 5px solid var(--brand-yellow);
+  border-radius: 14px;
+  padding: 20px 18px;
+  color: #5D5A4B;
+  transform: translateY(20px);
+}
+/* aviso importante acima do formulário */
+.notice-card > div { display: flex; gap: 10px; align-items: center; }
+.notice-card svg { color: var(--brand-blue) !important; flex: 0 0 auto; margin-top: 0; width: 19px; height: 19px; }
+.notice-card p { margin: 0; font-size: 14px; line-height: 1.6; color: #5D5A4B !important; }
+
+/* seção: bloco do formulário do perfil */
+.profile-section {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  display: block !important;
+  padding: 0 clamp(16px, 4vw, 42px) 18px;
+  background: transparent !important;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+.profile-card {
+  background: transparent !important;
+  padding: 0 18px 12px !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+/* cabeçalho: título 'seu perfil' e botão 'limpar filtros' */
+.profile-card > div:first-child {
+  /* ajuste do cabeçalho: título central e botão alinhado ao lado */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+}
+.profile-heading-wrap {
+  /* ajuste vertical: sobe um pouco o título 'seu perfil' */
+  grid-column: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  transform: translateY(2px);
+}
+/* texto: 'seu perfil' */
+.section-display-title,
+.results-display-title {
+  font-family: "Anton", Impact, sans-serif !important;
+  font-weight: 400 !important;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+}
+.section-display-title {
+  margin: 0;
+  color: var(--brand-blue) !important;
+  font-size: clamp(48px, 6vw, 72px) !important;
+  line-height: 1;
+}
+/* botão: 'limpar filtros' */
+.clear-btn {
+  /* ajuste vertical, alinha o botão de limpar sem quebrar o bloco */
+  grid-column: 3;
+  justify-self: start;
+  flex: 0 0 auto;
+  border: 1.5px solid var(--brand-blue);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--brand-blue);
+  padding: 9px 15px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 0;
+  margin-left: 0;
+  transform: translateY(2px);
+}
+.clear-btn:hover { background: #EDF4FC; }
+/* area do formulario e texto de aviso */
+.profile-form { margin-top: -2px !important; }
+/* texto dos campos sem info*/
+.profile-intro {
+  /* afasta a legenda dos campos sem perder o alinhamento */
+  display: block;
+  width: 100%;
+  margin: 0 auto 50px !important;
+  text-align: center;
+  color: var(--brand-blue) !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  transform: translateY(12px);
+}
+.profile-grid {
+  /* distância entre as colunas e linhas dos campos */
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  column-gap: 72px !important;
+  row-gap: 22px !important;
+  max-width: 780px;
+  margin: 0 auto;
+  align-items: start;
+}
+.profile-grid > div {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  box-sizing: border-box;
+}
+/* labels e selects dos filtros */
+.filter-label {
+  display: block;
+  width: 100%;
+  margin: 0 0 7px;
+  color: var(--brand-blue) !important;
+  font-size: 13px !important;
+  line-height: 1.3;
+  font-weight: 800 !important;
+  box-sizing: border-box;
+}
+.profile-select,
+.sort-select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 0 !important;
+  outline: 0;
+  border-radius: 999px !important;
+  background-color: var(--brand-yellow) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' fill='none' stroke='%23153B6A' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 16px) center;
+  background-size: 12px 8px;
+  color: var(--brand-blue-dark) !important;
+  padding: 11px 40px 11px 16px !important;
+  min-height: 46px;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 15px !important;
+  font-weight: 700;
+  cursor: pointer;
+}
+.profile-select:focus,
+.sort-select:focus,
+button:focus-visible,
+a:focus-visible { outline: 3px solid #7CA7DA !important; outline-offset: 3px; }
+.profile-select:focus,
+.sort-select:focus {
+  background-color: var(--brand-yellow) !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 6.5L6 1.5L11 6.5' fill='none' stroke='%23153B6A' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: calc(100% - 16px) center;
+  background-size: 12px 8px;
+}
+.form-action-row {
+  /* ajuste de distância: espaço entre os campos e o botão de verificar */
+  margin: 48px auto 0 !important;
+  padding: 16px 16px 0;
+  border-top: none;
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center !important;
+  gap: 13px !important;
+}
+/* botão de verificação e mensagem de validação */
+.verify-btn {
+  /* ajuste vertical: posiciona o botão de ação no centro do bloco */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-width: min(100%, 360px);
+  border: 0;
+  border-radius: 999px;
+  background: var(--brand-yellow) !important;
+  color: #173E6C !important;
+  padding: 14px 26px !important;
+  font-family: "Montserrat", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: none !important;
+  transform: translateY(-5px);
+}
+.verify-btn:hover { filter: brightness(.97); }
+.validation-message {
+  min-height: 20px;
+  margin: 0;
+  max-width: 720px;
+  text-align: center;
+  color: var(--brand-blue) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* painel de resultados */
+.results-zone {
+  /* ajuste de distância: bloco azul dos resultados, sem mexer no fundo quadriculado */
+  margin: 0 !important;
+  margin-top: -12px !important;
+  padding: 64px max(24px, calc((100vw - 1040px)/2)) 90px;
+  background: var(--brand-blue);
+  color: white;
+  min-height: 720px;
+}
+.results-top {
+  display: flex !important;
+  align-items: end !important;
+  justify-content: space-between !important;
+  gap: 28px !important;
+  margin: 0 auto;
+  max-width: 1040px;
+}
+/* topo do painel com título e ordenação */
+.results-display-title {
+  margin: 0;
+  color: var(--brand-cream) !important;
+  font-size: clamp(52px, 6vw, 78px) !important;
+  line-height: 1;
+}
+.sort-wrap { width: 250px !important; flex: 0 0 auto; }
+.sort-label { display: block; margin: 0 0 7px; color: #fff; font-size: 12px; font-weight: 800; }
+.sort-select { min-height: 38px; }
+.summary-strip { max-width: 1040px; margin: 28px auto 0; }
+.summary-strip-inner { background: transparent !important; color: #fff !important; padding: 0 !important; box-shadow: none !important; }
+/* ajuste de distância: topo do resumo e estatísticas dos resultados */
+.summary-stats { display: flex !important; gap: 38px !important; margin: 0 !important; }
+.summary-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  padding: 0 !important;
+  border: 0 !important;
+}
+.summary-number { margin: 0; color: var(--brand-yellow); font-size: 30px !important; font-weight: 800 !important; }
+.summary-label { margin: 0 !important; color: #fff !important; font-size: 15px !important; font-weight: 600; }
+/* legenda de disponibilidade */
+.availability-legend {
+  max-width: 1040px;
+  margin: 22px auto 0 !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 16px 18px !important;
+  color: white !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  line-height: 1.5;
+}
+.availability-legend > span {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  background: rgba(63, 107, 183, 0.792) !important;
+  border: 1px solid rgba(255,255,255,.18) !important;
+  box-shadow: 0 3px 0 rgba(0,0,0,.12), 0 2px 8px rgba(10,30,60,.10);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  filter: none;
+}
+.availability-legend > span:nth-of-type(1) { color: #04e164 !important; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.availability-legend > span:nth-of-type(2) { color: var(--brand-yellow) !important; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.availability-legend > span:nth-of-type(3) { color: #ff3838 !important; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.availability-legend .text-\[\#0b6e4f\] { color: #04e164 !important; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.availability-legend .text-\[\#9a5d00\] { color: var(--brand-yellow) !important; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.availability-legend .text-\[\#9b2226\] { color: #ff3838 !important; text-shadow: 0 2px 0 rgba(0,0,0,.12); }
+.availability-dot { width: 12px !important; height: 12px !important; flex: 0 0 12px !important; border-radius: 50%; box-shadow: none !important; }
+.availability-green { background: #00D85C !important; }
+.availability-yellow { background: var(--brand-yellow) !important; }
+.availability-red { background: #ff3838 !important; }
+.empty-state {
+  max-width: 1040px;
+  margin: 36px auto 0 !important;
+  border: 1px dashed rgba(255,255,255,.35) !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,.07) !important;
+  color: rgba(255,255,255,.86) !important;
+  padding: 18px 20px !important;
+  font-size: 13px;
+}
+/* lista de resultados e cartões de benefício */
+.results-list {
+  max-width: 1040px;
+  margin: 45px auto 0 !important;
+  display: grid !important;
+  gap: 50px !important;
+}
+.result-card {
+  border: 0 !important;
+  border-left: 0 !important;
+  border-radius: 20px !important;
+  background: #fff !important;
+  color: var(--brand-blue-dark);
+  padding: 24px !important;
+  box-shadow: 0 10px 30px rgba(9,45,89,.16) !important;
+}
+.result-head { display: flex !important; gap: 24px; align-items: flex-start; justify-content: space-between; }
+.result-copy { min-width: 0; flex: 1; }
+.result-tags { display: flex !important; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+.result-tags .availability-dot {
+  margin-right: 2px;
+  order: 0;
+}
+.status,
+.chip {
+  display: inline-flex !important;
+  align-items: center;
+  width: auto;
+  border-radius: 999px !important;
+  padding: 7px 11px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  line-height: 1;
+}
+.status-good { background: #DDF8E9 !important; color: #08733D !important; border: 1px solid #A8E7C4 !important; }
+.status-check { background: #FFF2BE !important; color: #775600 !important; border: 1px solid #EAC853 !important; }
+.status-no { background: #FFE1E1 !important; color: #9D2929 !important; border: 1px solid #F3A6A6 !important; }
+.chip { background: #EAF1FA !important; color: var(--brand-blue) !important; border: 1px solid #D5E2F1 !important; }
+.result-name {
+  margin: 14px 0 0 !important;
+  display: flex !important;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px !important;
+  color: var(--brand-blue) !important;
+  font-family: "Montserrat", Arial, sans-serif !important;
+  font-size: clamp(20px, 2.2vw, 27px) !important;
+  line-height: 1.12;
+  font-weight: 800 !important;
+}
+.result-summary { margin: 9px 0 0 !important; color: #536A87 !important; font-size: 14px; line-height: 1.6; }
+.benefit-box {
+  width: 220px;
+  flex: 0 0 220px;
+  border-radius: 16px !important;
+  background: #FFF4D3 !important;
+  padding: 16px !important;
+}
+.benefit-box > p { margin: 0; }
+.benefit-box > p:nth-of-type(1), .benefit-box > p:nth-of-type(3) {
+  color: #5F6D7D !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.value { margin-top: 4px !important; color: var(--brand-blue) !important; font-size: 18px; font-weight: 800 !important; }
+.benefit-box > p:nth-of-type(3) { margin-top: 13px !important; }
+.duration-summary { margin-top: 4px !important; color: var(--brand-ink) !important; font-size: 13px; font-weight: 700 !important; }
+.details-btn {
+  margin-top: 18px !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1.5px solid var(--brand-blue) !important;
+  border-radius: 999px !important;
+  background: transparent;
+  color: var(--brand-blue) !important;
+  padding: 11px 18px !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  cursor: pointer;
+  min-width: 200px;
+  justify-content: center;
+}
+.details-btn:hover { background: #EFF5FC !important; }
+.details { margin-top: 18px !important; padding-top: 18px !important; border-top: 1px solid #DDE6F0 !important; }
+.details.hidden { display: none !important; }
+.detail-grid { display: grid !important; grid-template-columns: 1fr; gap: 0 28px; margin: 0; }
+.detail-grid dt { color: var(--brand-blue) !important; font-size: 10px !important; font-weight: 800 !important; text-transform: uppercase; letter-spacing: .06em; }
+.detail-grid dd { margin: 5px 0 15px !important; color: #4D617A !important; font-size: 14px; line-height: 1.6; white-space: pre-line; }
+.official-link { display: inline-flex !important; align-items: center; gap: 7px; color: var(--brand-blue) !important; font-size: 12px; font-weight: 800 !important; text-decoration: underline; text-underline-offset: 4px; }
+
+/* logos institucionais do hero */
+.hero-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.hero-brand-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 170px;
+  height: 170px;
+  border-radius: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  overflow: visible;
+  margin: 0 0 -30px;
+}
+.hero-brand-badge img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transition: none;
+}
+.about-section {
+  background-color: #FFF8FB;
+  background-image:
+    linear-gradient(rgba(21, 59, 106, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 59, 106, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 24px;
+  border-top: 1px solid #F0D8E5;
+  border-bottom: 1px solid #F0D8E5;
+  color: var(--brand-ink);
+}
+.about-inner {
+  width: min(1040px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 68px 0 64px;
+}
+.about-eyebrow {
+  margin: 0 0 12px;
+  color: var(--brand-blue);
+  font-family: "Anton", Impact, sans-serif;
+  font-size: clamp(40px, 6vw, 52px);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: .01em;
+}
+.about-heading h2 {
+  width: 100%;
+  margin: 0;
+  color: var(--brand-blue);
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.about-lead {
+  width: 100%;
+  margin: 22px 0 0;
+  color: #593247;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.about-story-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 24px;
+}
+.about-story-block {
+  border-top: 2px solid #C66AA2;
+  padding-top: 22px;
+}
+.about-story-block h3,
+.team-heading h3 {
+  margin: 0 0 14px;
+  color: var(--brand-blue);
+  font-family: "Anton", Impact, sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+.about-story-block p {
+  margin: 0 0 14px;
+  color: #593247;
+  font-size: 14px;
+  line-height: 1.75;
+}
+.about-story-block p:last-child { margin-bottom: 0; }
+.team-section {
+  margin-top: 52px;
+  padding-top: 32px;
+  border-top: 1px solid #E8C8D9;
+}
+.team-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 18px;
+}
+.team-heading h3 { margin-bottom: 0; }
+.team-photo-note {
+  margin: 0;
+  color: #805D70;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 24px;
+}
+.team-member {
+  min-width: 0;
+  border-top: 1px solid #D9A9C3;
+  padding-top: 12px;
+}
+.team-photo-placeholder {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 4 / 3;
+  margin-bottom: 14px;
+  border: 1px dashed #C66AA2;
+  background: rgba(255,255,255,.72);
+  color: #A3437C;
+  font-size: 12px;
+  font-weight: 700;
+}
+.team-member h4 {
+  margin: 0 0 8px;
+  color: #6E0745;
+  font-size: 15px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+.team-member p {
+  margin: 0 0 7px;
+  color: #593247;
+  font-size: 12px;
+  line-height: 1.55;
+}
+.team-member p:last-child { margin-bottom: 0; }
+.partners-section {
+  background: #fff;
+  border-top: 1px solid #DDE6F0;
+}
+/* bloco de parceiros e logos institucionais */
+.partners-inner {
+  width: min(1040px, calc(100% - 48px));
+  margin: 0 auto;
+  padding: 30px 0 22px;
+}
+.partners-title {
+  margin: 0 0 18px;
+  text-align: center;
+  color: #66788F;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+}
+.partners-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  justify-content: center;
+}
+.partner-logo-card {
+  min-height: 112px;
+  border: 1px solid #E1E9F2;
+  border-radius: 16px;
+  background: #fff;
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  text-decoration: none;
+}
+.partner-logo-card img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: 78px;
+  object-fit: contain;
+}
+.partner-logo-card--renacee {
+  background: #f3f3f3;
+}
+.partner-logo-card--uff {
+  background: #ffffff;
+}
+.partner-logo-card--uff img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: 78px;
+  object-fit: contain;
+}
+.partner-logo-card--proex {
+  background: #030303;
+}
+.partner-logo-card--faperj img {
+  height: 68px;
+}
+.partner-logo-card--cnpq img {
+  height: 62px;
+}
+
+@media (max-width: 1100px) {
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    min-height: auto;
+    padding: 48px 0 18px;
+    text-align: center;
+  }
+  .hero-copy {
+    max-width: 760px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-copy h1,
+  .hero-text {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-art {
+    width: min(100%, 540px);
+    height: 330px;
+    margin: 12px auto 0;
+    align-self: center;
+  }
+  .hero-illustration {
+    width: 100%;
+    max-height: 330px;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-inner { grid-template-columns: 1fr; min-height: auto; padding: 48px 0 0; }
+  .hero-art { height: 310px; margin-top: 18px; }
+  .partners-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .partners-grid > .partner-logo-card { grid-column: span 2; }
+  .partners-grid > .partner-logo-card:nth-child(4) { grid-column: 2 / span 2; }
+  .partners-grid > .partner-logo-card:nth-child(5) { grid-column: 4 / span 2; }
+  .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .team-member:last-child { grid-column: 1 / -1; max-width: calc(50% - 10px); margin-inline: auto; }
+  .profile-grid { column-gap: 36px !important; }
+  .results-top { align-items: flex-start !important; flex-direction: column; }
+  .sort-wrap { width: min(100%, 320px) !important; }
+}
+
+@media (max-width: 680px) {
+  body { overflow-x: hidden; }
+  .hero-site { min-height: auto; }
+  .hero-inner, .profile-section, .notice-card { width: min(100% - 30px, 1040px); }
+  .hero-brand {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .hero-brand-badge {
+    width: 92px;
+    height: 92px;
+    margin: 0;
+    flex: 0 0 auto;
+  }
+  .hero-brand-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+  .hero-copy {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+  .hero-copy h1 {
+    font-size: clamp(38px, 12vw, 58px);
+    line-height: 0.88;
+    margin-top: 0;
+  }
+  .hero-copy h1 span {
+    white-space: normal;
+    margin-bottom: 8px;
+  }
+  .hero-text {
+    font-size: 15px;
+    margin: 12px 0 16px;
+  }
+  .hero-cta {
+    width: min(100%, 340px);
+    justify-content: center;
+    text-align: center;
+    padding: 12px 16px;
+  }
+  .hero-art {
+    width: min(100%, 390px);
+    height: 220px;
+    margin: 4px auto 0;
+    transform: none;
+  }
+  .hero-illustration {
+    max-height: 220px;
+  }
+  .partners-inner { width: min(100% - 30px, 1040px); }
+  .about-inner { width: min(100% - 30px, 1040px); padding: 48px 0; }
+  .about-heading h2 { font-size: 26px; }
+  .about-lead { font-size: 14px; }
+  .about-story-grid { grid-template-columns: 1fr; gap: 24px; margin-top: 24px; }
+  .about-story-block h3, .team-heading h3 { font-size: 26px; }
+  .team-section { margin-top: 38px; padding-top: 26px; }
+  .team-heading { align-items: flex-start; flex-direction: column; gap: 8px; }
+  .team-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 14px; margin-top: 18px; }
+  .team-member:last-child { grid-column: 1 / -1; max-width: calc(50% - 7px); margin-inline: auto; }
+  .team-photo-placeholder { aspect-ratio: 4 / 3; }
+  .partners-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+  }
+  .partners-grid > .partner-logo-card { grid-column: span 2; }
+  .partners-grid > .partner-logo-card:nth-child(4) { grid-column: 2 / span 2; }
+  .partners-grid > .partner-logo-card:nth-child(5) { grid-column: 4 / span 2; }
+  .partner-logo-card { min-height: 82px; padding: 10px; }
+  .partner-logo-card img { max-height: 54px; }
+  .notice-card {
+    margin-top: 20px;
+    padding: 16px 14px;
+    transform: translateY(20px);
+  }
+  .notice-card > div {
+    align-items: center;
+  }
+  .notice-card p {
+    font-size: 13px !important;
+    line-height: 1.5;
+  }
+  .profile-section { padding: 28px 0 40px; }
+  .profile-card {
+    padding: 0 !important;
+    width: 100%;
+    transform: translateX(3.5%);
+  }
+  .profile-card > div:first-child {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto 10px;
+    transform: translateY(-2px);
+  }
+  .profile-heading-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transform: none;
+    margin: 0;
+  }
+  .section-display-title {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .clear-btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    transform: none;
+    min-width: 170px;
+  }
+  .profile-form {
+    width: min(93%, 420px);
+    max-width: 420px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .profile-intro {
+    position: relative;
+    top: -12px;
+    width: 100%;
+    max-width: 440px;
+    margin: 0 auto 20px !important;
+    font-size: 13px !important;
+    text-align: center;
+    line-height: 1.4;
+    transform: translateY(14px);
+  }
+  .profile-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+    width: min(93%, 420px);
+    max-width: 420px;
+    margin: 6px auto 0;
+    justify-items: center;
+  }
+  .profile-grid > div {
+    width: min(100%, 380px);
+    margin: 0 auto;
+  }
+  .filter-label {
+    font-size: 12px !important;
+    text-align: center;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto 7px;
+  }
+  .profile-select {
+    min-height: 42px;
+    font-size: 14px !important;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+    text-align-last: center;
+    padding-right: 26px !important;
+  }
+  .profile-select option {
+    text-align: left;
+  }
+  .verify-btn {
+    min-width: min(100%, 250px);
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    transform: translateY(8px);
+  }
+  .form-action-row {
+    margin: 10px auto 0 !important;
+    width: 100%;
+    max-width: 430px;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center;
+    text-align: center;
+    transform: translateY(0);
+  }
+  .validation-message {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .results-zone {
+    padding: 33px 14px 36px;
+  }
+  .results-display-title {
+    font-size: clamp(42px, 11vw, 58px) !important;
+    line-height: 0.92;
+    margin: 0 auto 12px;
+    display: block;
+    text-align: center;
+    width: 100%;
+  }
+  .results-top {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 11px !important;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+  .sort-wrap {
+    width: min(100%, 310px) !important;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sort-label {
+    font-size: 12px !important;
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .sort-select {
+    min-height: 40px;
+    font-size: 13px !important;
+  }
+  .summary-strip {
+    margin-top: 10px;
+  }
+  .summary-stats {
+    flex-direction: row !important;
+    justify-content: flex-start;
+    gap: 14px !important;
+    align-items: baseline;
+  }
+  .summary-stat {
+    gap: 5px;
+    align-items: baseline;
+  }
+  .summary-number {
+    font-size: 24px !important;
+    line-height: 1;
+  }
+  .summary-label {
+    font-size: 12px !important;
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+  .availability-legend {
+    gap: 8px 10px !important;
+    margin-top: 10px !important;
+    font-size: 11px !important;
+  }
+  .results-list {
+    margin-top: 32px !important;
+    gap: 30px !important;
+  }
+  .result-card {
+    padding: 14px !important;
+  }
+  .result-head { flex-direction: column; }
+  .benefit-box { width: 100%; flex-basis: auto; }
+}
+
+.paper-grid { background: #fff !important; background-image: none !important; }
+.profile-section .profile-select,
+.results-zone .sort-select {
+  appearance: base-select !important;
+  -webkit-appearance: base-select !important;
+}
+.profile-select::picker(select),
+.sort-select::picker(select) { appearance: base-select !important; }
+.profile-select::picker-icon,
+.sort-select::picker-icon { display: none; }
+.profile-select::picker(select),
+.sort-select::picker(select) {
+  background: #fff !important;
+  border: 1.5px solid #C66AA2 !important;
+  border-radius: 16px !important;
+  padding: 6px;
+}
+.profile-select option,
+.sort-select option {
+  padding: 8px 12px;
+  border-radius: 10px !important;
+  color: #6E0745 !important;
+}
+.profile-select option:hover,
+.profile-select option:checked,
+.sort-select option:hover,
+.sort-select option:checked {
+  background: #F9DDEB !important;
+  color: #6E0745 !important;
+}
+.skip-link {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #fff;
+  color: #6e0745;
+  font-weight: 800;
+  text-decoration: none;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: none; }
+#conteudo-principal:focus { outline: none; }
+.notice-card { margin: 70px auto; transform: none; }
+.notice-card > div { align-items: flex-start; }
+.notice-card svg { color: var(--brand-blue) !important; margin-top: 2px; }
+.notice-card p { max-width: 75ch; }
+@media (min-width: 681px) {
+  .notice-card p { max-width: none; flex: 1; }
+}
+.profile-section {
+  background-color: #fff;
+  background-image:
+    linear-gradient(rgba(21, 59, 106, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(21, 59, 106, 0.04) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.profile-heading-wrap,
+.clear-btn { transform: none; }
+.profile-form { margin-top: 12px !important; }
+.profile-intro { margin-bottom: 28px !important; transform: none; }
+.profile-select:focus,
+.sort-select:focus,
+button:focus-visible,
+a:focus-visible { outline-color: #C66AA2 !important; }
+.verify-btn { color: #6E0745 !important; transform: none; }
+.results-zone { margin-top: 0 !important; }
+.results-list { margin-top: 34px !important; }
+.availability-legend > span {
+  background: rgba(198, 106, 162, .35) !important;
+  border-color: rgba(255,255,255,.18) !important;
+}
+.availability-legend > span:nth-of-type(3) { color: #ff8080 !important; }
+.status-check { background: #173E6C !important; color: #FFFFFF !important; border-color: #5A0539 !important; }
+.result-summary { max-width: 70ch; }
+.benefit-box { background: #173E6C !important; }
+.benefit-box > p:nth-of-type(1),
+.benefit-box > p:nth-of-type(3) { color: #55C9FF !important; }
+.value,
+.duration-summary { color: #FFFFFF !important; }
+@media (max-width: 680px) {
+  .hero-inner { grid-template-columns: minmax(0, 1fr); padding-top: 28px; }
+  .hero-copy { width: 100%; min-width: 0; }
+  .hero-brand { justify-content: center; gap: 10px; margin-bottom: 4px; }
+  .hero-brand-badge {
+    width: clamp(100px, 32vw, 150px);
+    height: clamp(100px, 32vw, 150px);
+    margin-bottom: -18px;
+  }
+  .hero-copy h1 { font-size: clamp(32px, 11.5vw, 64px); line-height: .9; }
+  .hero-copy h1 span { white-space: normal; margin-bottom: .3em; }
+  .hero-text { font-size: 15px; margin: 20px auto; }
+  .hero-cta { max-width: 100%; padding: 12px 16px; font-size: 12px; }
+  .hero-art { width: 100%; height: auto; margin-top: 8px; transform: none; }
+  .hero-illustration { max-height: 280px; }
+  .notice-card { margin: 32px auto; }
+  .profile-section { margin: 0 auto; padding: 0 0 48px; }
+  .profile-card { padding: 0 !important; width: auto; transform: none; }
+  .profile-card > div:first-child {
+    grid-template-columns: 1fr;
+    align-items: center;
+    gap: 10px;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    transform: none;
+  }
+  .profile-heading-wrap { grid-column: 1; justify-content: center; text-align: center; width: 100%; }
+  .clear-btn { grid-column: 1; justify-self: center; margin: 0; align-self: center; }
+  .profile-form { width: auto; max-width: none; margin: 12px auto 0 !important; display: block; }
+  .profile-intro {
+    position: static;
+    top: auto;
+    width: 100%;
+    max-width: none;
+    margin: 0 auto 28px !important;
+    font-size: 14px !important;
+    line-height: normal;
+    transform: none;
+  }
+  .profile-grid { grid-template-columns: 1fr !important; gap: 18px !important; width: auto; max-width: 480px; margin: 0 auto; justify-items: stretch; }
+  .profile-grid > div { width: 100%; max-width: none; margin: 0; }
+  .filter-label { font-size: 13px !important; text-align: left; width: 100%; max-width: none; margin: 0 0 7px; }
+  .profile-select { min-height: 46px; font-size: 15px !important; width: 100%; max-width: none; margin: 0; text-align: left; text-align-last: auto; padding-right: 40px !important; }
+  .verify-btn { min-width: min(100%, 360px); width: auto; max-width: none; margin: 0; transform: none; }
+  .form-action-row { margin: 32px auto 0 !important; width: auto; max-width: none; padding: 16px 0 0; transform: none; }
+  .results-zone { padding: 48px 15px 64px; }
+  .results-display-title { font-size: clamp(36px, 11vw, 56px) !important; line-height: 1; margin: 0; text-align: left; width: auto; }
+  .results-top { align-items: flex-start !important; flex-direction: column !important; gap: 18px !important; margin-bottom: 0; text-align: left; }
+  .sort-wrap { width: 100% !important; margin: 0; display: block; }
+  .sort-label { text-align: left; }
+  .summary-strip { margin-top: 28px; }
+  .summary-stats { flex-direction: column !important; justify-content: flex-start; gap: 10px !important; align-items: flex-start; }
+  .availability-legend { gap: 12px 24px !important; margin-top: 22px !important; font-size: 13px !important; }
+  .results-list { margin-top: 34px !important; gap: 28px !important; }
+  .result-card { padding: 18px !important; }
+  .result-head { flex-direction: column; }
+  .benefit-box { width: 100%; flex-basis: auto; }
+}
+
+@media (max-width: 380px) {
+  .hero-inner, .profile-section, .notice-card { width: calc(100% - 24px); }
+  .results-zone { padding-left: 12px; padding-right: 12px; }
+  .partners-grid { gap: 10px; }
+}
+</style></head>
+<body class="w-full min-h-screen paper-grid">
+<a href="#conteudo-principal" class="skip-link">Pular para o conteúdo principal</a>
+<header class="hero-site">
+<div class="hero-inner">
+<div class="hero-copy">
+<div class="hero-brand">
+  <a class="hero-brand-badge" href="https://sites.google.com/view/include-meninas-uff?pli=1&amp;authuser=0" target="_blank" rel="noopener noreferrer">
+    <img src="include_trans.png" alt="Include Meninas" />
+  </a>
+</div>
+<h1 style="margin-top: 0;">
+  <span>A QUAIS AUXÍLIOS</span>
+  <span>VOCÊ TEM DIREITO?</span>
+</h1>
+<p class="hero-text">Consulte uma triagem dos auxílios e bolsas estudantis da UFF, com base nas informações da PROAES. Benefícios federais não estão incluídos nesta versão.</p>
+<a class="hero-cta" href="#perfil"><span>Responda ao questionário e descubra!</span><i aria-hidden="true" data-lucide="arrow-down"></i></a>
+</div>
+<div class="hero-art" aria-label="Ilustração principal">
+<img class="hero-illustration" src="arte.png" alt="Ilustração do verificador" />
+</div>
+</div>
+</header>
+<main class="site-main" id="conteudo-principal" tabindex="-1">
+<!-- AVISO -->
+<section aria-label="Aviso importante" class="notice-card">
+<div class="flex gap-3">
+<i aria-hidden="true" class="mt-0.5 h-5 w-5 shrink-0 text-[#285A9A]" data-lucide="circle-alert"></i>
+<p class="text-sm leading-relaxed text-[#304C73]">
+        Este resultado é apenas uma triagem informativa dos principais requisitos.
+        A elegibilidade final, a abertura de inscrições,
+        as vagas e os critérios completos devem ser
+        confirmados no edital e na referência oficial
+        da PROAES.
+        Última atualização: 02/10/2026.
+      </p>
+</div>
+</section>
+<!-- PERFIL + RESUMO -->
+<section class="profile-section" id="perfil">
+<!-- formulário principal -->
+<section aria-labelledby="profile-heading" class="profile-card">
+<div class="flex flex-wrap items-end justify-between gap-3">
+<div class="profile-heading-wrap">
+<!-- título da seção -->
+<h2 class="section-display-title" id="profile-heading">SEU PERFIL</h2>
+</div>
+<!-- botão para limpar os filtros selecionados -->
+<button class="clear-btn" id="clear-btn" type="button">
+          Limpar filtros
+        </button>
+</div>
+<form class="profile-form" id="eligibility-form">
+<fieldset>
+<!-- aviso geral do formulário -->
+<legend class="profile-intro">
+            Campos em branco podem fazer com que alguns auxílios potencialmente 
+            incompatíveis com o seu perfil sejam exibidos.
+          </legend>
+<!-- bloco principal dos campos do perfil -->
+<div class="profile-grid">
+<!-- bloco: dados básicos do estudante -->
+<div>
+<!-- campo: modalidade do curso -->
+<label class="filter-label" for="modality">
+                Modalidade
+              </label>
+<select class="profile-select" id="modality">
+<option value="unknown"></option>
+<option value="undergrad">
+                  Graduação presencial
+                </option>
+<option value="postgrad">
+                  Pós graduação presencial
+                </option>
+</select>
+</div>
+<!-- campo: período do curso -->
+<div>
+<label class="filter-label" for="period">
+                Período
+              </label>
+<select class="profile-select" id="period">
+<option value="unknown"></option>
+<option value="first">
+                  Primeiro período
+                </option>
+<option value="second">
+                  Segundo período
+                </option>
+<option value="later">
+                  Posterior ao segundo período
+                </option>
+</select>
+</div>
+<!-- bloco: carga acadêmica e renda -->
+<!-- campo: quantidade de disciplinas -->
+<div>
+<label class="filter-label" for="subjects">
+                Disciplinas inscritas
+              </label>
+<select class="profile-select" id="subjects">
+<option value="unknown"></option>
+<option value="0">
+                  Nenhuma
+                </option>
+<option value="1">
+                  1 disciplina
+                </option>
+<option value="2to3">
+                  2 a 3 disciplinas
+                </option>
+<option value="4plus">
+                  4 ou mais disciplinas
+                </option>
+</select>
+</div>
+<!-- campo: renda familiar -->
+<div>
+<label class="filter-label" for="income">
+                Renda familiar per capita (por pessoa)
+              </label>
+<select class="profile-select" id="income">
+<option value="unknown"></option>
+<option value="upto1">
+                  Até 1 salário mínimo
+                </option>
+<option value="above1">
+                  Acima de 1 salário mínimo
+                </option>
+</select>
+</div>
+<!-- bloco: local e estrutura do campus -->
+<div>
+<label class="filter-label" for="outside">
+                Campus em Niterói
+              </label>
+<select class="profile-select" id="outside">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+<!-- campo: com restaurante universitário -->
+<div>
+<label class="filter-label" for="RU">
+                Campus com Restaurante Universitário
+              </label>
+<select class="profile-select" id="RU">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+<!-- campo: moradia estudantil -->
+<div>
+<label class="filter-label" for="resident">
+                Residente em moradia estudantil
+              </label>
+<select class="profile-select" id="resident">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+<!-- bloco: ações afirmativas e condições especiais -->
+<!-- campo: ação afirmativa -->
+<div>
+<label class="filter-label" for="affirmative">
+                Modalidade de ação afirmativa
+              </label>
+<select class="profile-select" id="affirmative">
+<option value="unknown"></option>
+<option value="none">
+                  Nenhuma
+                </option>
+<option value="indigenous">
+                  Indígena
+                </option>
+<option value="quilombola">
+                  Quilombola
+                </option>
+<option value="trans">
+                  Trans
+                </option>
+<option value="black">
+                  Preta
+                </option>
+<option value="mixed">
+                  Parda
+                </option>
+<option value="na">
+                  Não se aplica
+                </option>
+</select>
+</div>
+<!-- campo: deficiência ou neurodivergência -->
+<div>
+<label class="filter-label" for="disability">
+                Pessoa com deficiência/neurodivergência
+              </label>
+<select class="profile-select" id="disability">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+<!-- campo: situação de refúgio -->
+<div>
+<label class="filter-label" for="refugee">
+                Pessoa refugiada ou migrante humanitária
+              </label>
+<select class="profile-select" id="refugee">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+<!-- campo: filho menor de 6 anos -->
+<div>
+<label class="filter-label" for="child">
+                Mãe/pai com filho menor de 6 anos
+              </label>
+<select class="profile-select" id="child">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+<!-- campo: gestante ou puerpério -->
+<div>
+<label class="filter-label" for="pregnant">
+                Gestante ou no puerpério
+              </label>
+<select class="profile-select" id="pregnant">
+<option value="unknown"></option>
+<option value="yes">
+                  Sim
+                </option>
+<option value="no">
+                  Não
+                </option>
+</select>
+</div>
+</div>
+</fieldset>
+<!-- área de ação do formulário -->
+<!-- botão para executar a verificação -->
+<div class="form-action-row">
+<button class="verify-btn" type="submit">
+<i aria-hidden="true" class="h-5 w-5" data-lucide="search-check"></i>
+<span>
+              Verificar elegibilidade
+            </span>
+</button>
+<p aria-live="polite" class="validation-message" id="validation-message" role="status"></p>
+</div>
+</form>
+</section>
+<!-- PAINEL RESUMO -->
+
+</section>
+<!-- RESULTADOS -->
+<section aria-labelledby="results-heading" class="results-zone">
+<div class="results-top">
+<div>
+
+<h2 class="results-display-title" id="results-heading">RESULTADOS DA CONSULTA</h2>
+</div>
+<div class="sort-wrap">
+<label class="sort-label" for="sort">
+          Ordenar resultados
+        </label>
+<select class="sort-select" id="sort">
+<option value="value">Maior valor/benefício</option>
+<option value="duration">Maior duração</option>
+</select>
+</div>
+</div>
+<aside aria-label="Resumo da análise" class="summary-strip">
+<div class="summary-strip-inner">
+
+
+<div class="summary-stats">
+<div class="summary-stat">
+<p class="summary-number" id="count-good">
+              —
+            </p>
+<p class="summary-label">
+              Possivelmente elegíveis
+            </p>
+</div>
+<div class="summary-stat">
+<p class="summary-number" id="count-total">
+              15
+            </p>
+<p class="summary-label">
+              Programas existentes
+            </p>
+</div>
+</div>
+</div>
+</aside><div aria-label="Legenda de disponibilidade" class="availability-legend">
+
+<span class="inline-flex items-center gap-1.5">⬤ Disponível para 2026.2</span>
+<span class="inline-flex items-center gap-1.5">⬤ Última chamada entre 2026.1 e 2025.1</span>
+<span class="inline-flex items-center gap-1.5">⬤ Última chamada em 2024 ou anterior</span>
+</div>
+<p class="empty-state" id="empty-state">
+      Preencha seu perfil e selecione
+      “Verificar elegibilidade” para receber uma triagem.
+      Todos os 15 programas serão analisados.
+    </p>
+<div class="results-list" id="results"></div>
+</section>
+</main>
+<!-- TEMPLATE DOS RESULTADOS -->
+<template id="result-template">
+<article class="result-card">
+<div class="result-head">
+<div class="result-copy">
+<div class="result-tags">
+<span aria-label="Disponibilidade do período" class="availability-dot"></span>
+<span class="status"></span>
+<span class="type chip"></span>
+</div>
+<h3 class="name result-name">
+<span class="name-text"></span>
+</h3>
+<p class="summary result-summary"></p>
+</div>
+<div class="benefit-box">
+<p class="text-xs font-bold uppercase tracking-wide text-[#7A4A65]">
+          Valor / benefício
+        </p>
+<p class="value"></p>
+<p class="mt-3 text-xs font-bold uppercase tracking-wide text-[#7A4A65]">
+          Prazo de duração
+        </p>
+<p class="duration-summary"></p>
+</div>
+</div>
+<button aria-expanded="false" class="details-btn" type="button">
+<span class="details-open">
+        Ver detalhes completos
+      </span>
+<span class="details-close hidden">
+        Recolher detalhes
+      </span>
+<i class="h-4 w-4" data-lucide="chevron-down"></i>
+</button>
+<div class="details hidden">
+<dl class="detail-grid">
+<div>
+<dt>
+            Período de inscrição
+          </dt>
+<dd class="enrollment"></dd>
+</div>
+<div class="md:col-span-2">
+<dt>
+            Critérios de elegibilidade relevantes
+          </dt>
+<dd class="criteria"></dd>
+</div>
+<div class="md:col-span-2">
+<dt>
+            Regras de acúmulo
+          </dt>
+<dd class="accumulation"></dd>
+</div>
+</dl>
+<a class="official-link" rel="noopener noreferrer" target="_blank" rel="noopener noreferrer">
+
+        Consultar referência oficial
+
+        <i aria-hidden="true" class="h-4 w-4" data-lucide="external-link"></i>
+</a>
+</div>
+</article>
+</template>
+<script>
+
+const official = "";
+
+const programOfficialLinks = {
+  "Auxílio Acolhimento para Estudantes Ingressantes": "https://editais.uff.br/editais?field_n_mero_value=&combine=Acolhimento+Ingressantes&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Auxílio Educação Infantil": "https://editais.uff.br/editais?field_n_mero_value=&combine=Creche&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Auxílio Alimentação para estudantes dos campi em expansão": "https://editais.uff.br/editais?field_n_mero_value=&combine=Alimentação&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Auxílio Permanência estudantil": "https://editais.uff.br/editais?field_n_mero_value=17%2F2024&combine=&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Auxílio ao Estudante com Deficiência": "https://editais.uff.br/editais?field_n_mero_value=16%2F2024&combine=Deficiência&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Auxílio para estudantes indígenas e quilombolas": "https://editais.uff.br/11634",
+  "Auxílio para pessoas trans ingressantes": "https://editais.uff.br/11634",
+  "Auxílio para pessoas refugiadas ingressantes": "https://editais.uff.br/11634",
+  "Bolsa de Apoio à Inclusão": "https://editais.uff.br/editais?field_n_mero_value=&combine=Inclusão&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Apoio Material Didático": "https://editais.uff.br/editais?field_n_mero_value=&combine=Material&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Apoio Emergencial": "https://editais.uff.br/editais?field_n_mero_value=&combine=Emergencial&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Apoio à Saúde": "https://editais.uff.br/editais?field_n_mero_value=&combine=Saúde&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Apoio a estudantes gestantes e no puerpério": "https://editais.uff.br/editais?field_n_mero_value=&combine=Gestante&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50",
+  "Apoio a Eventos": "https://editais.uff.br/editais?field_n_mero_value=&combine=Eventos&field_tipo_tid=15&field__rg_o_respons_vel_tid=&field_errata_value=All&items_per_page=50"
+};
+
+function getOfficialLink(program) {
+  return program.officialLink || programOfficialLinks[program.name] || official;
+}
+
+let onlyEligible = false;
+
+const programs = [
+  {
+    name:
+      "Auxílio Acolhimento para Estudantes Ingressantes",
+    summary:
+      "Apoia financeiramente estudantes ingressantes em cursos presenciais que estão em situação de vulnerabilidade socioeconômica. O benefício visa garantir a permanência dos alunos no início da graduação e as inscrições ocorrem online pelo portal SisBol.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$500,00",
+    duration:
+      "2 semestres, com possibilidade de prorrogação",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Primeiro período
+- Renda familiar per capita de até 1 salário mínimo
+- Inscrição em no mínimo 4 disciplinas`,
+
+    accumulation:
+`- Auxílios Alimentação para Estudantes dos Campi em Expansão
+- Auxílio de complementação de alimentação para residentes das moradias estudantis dos campi em expansão
+- Auxílio Educação Infantil
+- Apoio a estudantes gestantes e no puerpério
+- Apoio à Saúde
+- Auxílio emergencial.`,
+
+    rules: {
+      modality: "undergrad",
+      period: "first",
+      income: "upto1",
+      subjects: "4plus"
+    }
+  },
+
+  {
+    name:
+      "Auxílio Educação Infantil",
+    summary:
+      "Apoia estudantes com filhos menores de seis anos em vulnerabilidade socioeconômica, custeando despesas com creche ou pré-escola. O benefício é gerenciado pela PROAES e exige inscrição em edital específico através do sistema SisBol para ajudar na permanência acadêmica.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$ 300,00 por filho de até 06 anos de idade.",
+    duration:
+      "Até 11 meses",
+    enrollment:
+      "2024.2",
+
+    criteria:
+`- Graduação presencial
+- Renda familiar per capita de até 1 salário mínimo
+- Inscrição em no mínimo 4 disciplinas
+- Possuir filho(s) em idade inferior a 6 (seis) anos`,
+
+    accumulation:
+`- Mais um auxílio ou bolsa da PROAES
+- Outros apoios da PROAES concedidos em caráter excepcional ou cota única`,
+
+    rules: {
+      modality: "undergrad",
+      income: "upto1",
+      subjects: "4plus",
+      child: "yes"
+    }
+  },
+
+  {
+    name:
+      "Auxílio Alimentação para estudantes dos campi em expansão",
+    summary:
+      "Concede auxílio financeiro mensal a estudantes em vulnerabilidade socioeconômica de unidades acadêmicas fora da sede que não possuem Restaurante Universitário.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$ 450,00",
+    duration:
+      "1 semestre",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Campus fora de Niterói
+- Inscrição em no mínimo 4 disciplinas
+- Renda familiar per capita de até 1 salário mínimo
+- Campus sem Restaurante Universitário
+- Não residir em moradia estudantil da UFF.`,
+
+    accumulation:
+`- Mais um auxílio ou bolsa da PROAES
+- Educação Infantil
+- Apoio a estudantes gestantes e no puerpério
+- Apoio à saúde
+- Auxílio emergencial.`,
+
+    rules: {
+      modality: "undergrad",
+      outside: "no",
+      subjects: "4plus",
+      income: "upto1",
+      RU: "no",
+      resident: "no"
+    }
+  },
+
+  {
+    name:
+      "Auxílio Permanência estudantil",
+    summary:
+      "Oferece apoio financeiro mensal para estudantes de graduação presencial em situação de vulnerabilidade socioeconômica. O benefício visa combater a evasão acadêmica e garantir as condições necessárias para a permanência e a conclusão do curso superior. A seleção é feita por edital da Proaes com base na avaliação do cadastro socioeconômico (CadUFF).",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$500,00",
+    duration:
+      "11 meses",
+    enrollment:
+      "2024.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrição em no mínimo 4 disciplinas
+- Renda familiar per capita de até 1 salário-mínimo`,
+
+    accumulation:
+`- Auxílios Alimentação para Estudantes dos Campi em Expansão
+- Auxílio de complementação de alimentação para residentes das moradias estudantis dos campi em expansão
+- Auxílio Educação Infantil
+- Outros apoios da PROAES concedidos em caráter excepcional ou cota única`,
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      income: "upto1"
+    }
+  },
+
+  {
+    name:
+      "Auxílio ao Estudante com Deficiência",
+    summary:
+      "Oferece apoio financeiro institucional para garantir a acessibilidade e a permanência de alunos matriculados no ensino superior. O benefício visa cobrir custos de transporte adaptado, materiais didáticos específicos e contratação de profissionais de apoio acadêmico.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$ 500,00",
+    duration:
+      "Até 11 meses",
+    enrollment:
+      "Não encontrado no site de editais datas posteriores a 2024.",
+
+    criteria:
+`- Graduação presencial
+- Inscrição em no mínimo 4 disciplinas
+- Pessoa com deficiência.`,
+
+    accumulation:
+`- Auxílios Alimentação para Estudantes dos Campi em Expansão
+- Auxílio de complementação de alimentação para residentes das moradias estudantis dos campi em expansão
+- Auxílio Educação Infantil
+- Outros apoios da PROAES concedidos em caráter excepcional
+- Não poderá acumular com o Programa Bolsa Permanência vinculado ao Ministério da Educação`,
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      disability: "yes"
+    }
+  },
+
+  {
+    name:
+      "Auxílio para estudantes indígenas e quilombolas",
+    summary:
+      "Apoia a permanência acadêmica de estudantes indígenas e quilombolas matriculados em cursos de graduação presencial. A assistência é coordenada pela Proaes e pelo governo federal, visando garantir condições dignas de estudo e reduzir a evasão universitária.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$ 500,00",
+    duration:
+      "1 semestre",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrição em no mínimo 4 disciplinas
+- Ação afirmativa indígena/quilombola`,
+
+    accumulation:
+`- Auxílios Alimentação para Estudantes dos Campi em Expansão
+- Auxílio de complementação de alimentação para residentes das moradias estudantis dos campi em expansão
+- Auxílio Educação Infantil
+- Outros apoios da PROAES concedidos em caráter excepcional
+- Não poderá acumular com o Programa Bolsa Permanência vinculado ao Ministério da Educação`,
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      affirmative: [
+        "indigenous",
+        "quilombola"
+      ]
+    }
+  },
+
+  {
+    name:
+      "Auxílio para pessoas trans ingressantes",
+    summary:
+      "Apoia a permanência na graduação presencial de estudantes trans e travestis em vulnerabilidade socioeconômica via SisBol.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$ 500,00",
+    duration:
+      "1 semestre",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrição em no mínimo 4 disciplinas
+- Ação afirmativa trans`,
+
+    accumulation:
+`- Auxílios Alimentação para Estudantes dos Campi em Expansão
+- Auxílio de complementação de alimentação para residentes das moradias estudantis dos campi em expansão
+- Auxílio Educação Infantil
+- Apoio a estudantes gestantes e no puerpério
+- Apoio à Saúde
+- Auxílio emergencial.`,
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      affirmative: "trans"
+    }
+  },
+
+  {
+    name:
+      "Auxílio para pessoas refugiadas ingressantes",
+    summary:
+      "Oferece apoio financeiro inicial a estudantes refugiados e com visto humanitário recém-ingressantes em vulnerabilidade socioeconômica.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$ 500,00",
+    duration:
+      "1 semestre",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrição em no mínimo 4 disciplinas
+- Pessoa refugiada/migrante humanitária`,
+
+    accumulation:
+`- Auxílios Alimentação para Estudantes dos Campi em Expansão
+- Auxílio de complementação de alimentação para residentes das moradias estudantis dos campi em expansão
+- Auxílio Educação Infantil
+- Apoio a estudantes gestantes e no puerpério
+- Apoio à Saúde
+- Auxílio emergencial.`,
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      refugee: "yes"
+    }
+  },
+
+  {
+    name:
+      "Bolsa de Apoio à Inclusão",
+    summary:
+      "Promove a acessibilidade pedagógica e social no ambiente universitário. O programa seleciona estudantes apoiadores para auxiliar alunos com deficiência, autismo e outras neurodivergências em suas atividades acadêmicas regulares. As inscrições e editais ocorrem periodicamente por meio dos sistemas SISBOL e PROPPI.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$600,00",
+    duration:
+      "Até o fim do ano letivo",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- A partir do segundo período
+- Inscrita(o) em no mínimo 4 disciplinas
+- Deferido no CADUFF`,
+
+    accumulation:
+`- Auxílio Alimentação para Estudantes dos Campi em Expansão
+- Auxílio Educação Infantil
+- Apoios estudantis
+- Apoio Emergencial
+- Apoio à Saúde
+- Apoio a estudantes gestantes e no puerpério
+- Apoio Material Didático
+- Apoio a Eventos.`,
+
+    rules: {
+      modality: "undergrad",
+      period: [
+        "second",
+        "later"
+      ],
+      subjects: "4plus"
+    },
+  },
+
+  {
+    name:
+      "Apoio Material Didático",
+    summary:
+      "Tem como objetivo financiar exclusivamente materiais de consumo indispensáveis para o conteúdo programático de cursos presenciais de graduação.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "Até R$2.000,00",
+    duration:
+      "Parcela única",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrição em no mínimo 4 disciplinas
+- Renda familiar per capita de até 1 salário mínimo`,
+
+    accumulation:
+      "Acumulável com qualquer bolsa ou auxílio da PROAES.",
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      income: "upto1"
+    }
+  },
+
+  {
+    name:
+      "Apoio Emergencial",
+    summary:
+      "Ele atende quem enfrenta dificuldades financeiras imprevistas, como desemprego na família ou calamidades. O objetivo é evitar que o aluno precise trancar o curso. As inscrições e o envio de documentos ocorrem pelo sistema SisBol.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$1.000,00",
+    duration:
+      "Parcela única",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrito(a) em no mínimo 4 disciplinas
+- Renda familiar per capita de até 1 salário mínimo`,
+
+    accumulation:
+      "Acumulável com qualquer bolsa ou auxílio da PROAES.",
+
+    rules: {
+      modality: "undergrad",
+      subjects: "4plus",
+      income: "upto1"
+    }
+  },
+
+  {
+    name:
+      "Apoio à Saúde",
+    summary:
+      "Oferece auxílio financeiro para estudantes de graduação presencial em situação de vulnerabilidade social. O benefício é de fluxo contínuo e serve para custear despesas com medicamentos, exames médicos, óculos e tratamentos de saúde. Para pós-graduação, depende de disponibilidade orçamentária.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$200, R$400 ou R$600",
+    duration:
+      "Parcela única",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação ou pós graduação presencial
+- Renda familiar per capita de até 1 salário mínimo`,
+
+    accumulation:
+      "Acumulável com qualquer bolsa e auxílio da PROAES.",
+
+    rules: {
+      modality: [
+        "undergrad",
+        "postgrad"
+      ],
+      income: "upto1",
+    },
+  },
+
+  {
+    name:
+      "Apoio a estudantes gestantes e no puerpério",
+    summary:
+      "Oferece assistência financeira e alimentar para alunas da graduação e pós-graduação. O objetivo principal da iniciativa é garantir a permanência e a conclusão dos estudos, reduzindo a evasão escolar decorrente da maternidade. O benefício apoia as estudantes durante a gestação e os primeiros meses do bebê, promovendo a equidade e a inclusão no ambiente acadêmico. Para pós-graduação, depende de disponibilidade orçamentária.",
+    type:
+      "Auxílio Financeiro",
+    tags:
+      ["Auxílio Alimentar"],
+    value:
+      "R$ 1.500,00 + cestas básicas",
+    duration:
+      "Parcela única + 6 meses",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação ou pós graduação presencial
+- Renda familiar per capita de até 1 salário mínimo
+- Inscrita(o) em no mínimo 2 disciplinas
+- Gestante ou no puerpério`,
+
+    accumulation:
+      "Acumulável com qualquer bolsa ou auxílio da PROAES.",
+
+    rules: {
+      modality: [
+        "undergrad",
+        "postgrad"
+      ],
+      income: "upto1",
+      subjects: [
+        "2to3",
+        "4plus"
+      ],
+      pregnant: "yes"
+    },
+  },
+
+  {
+    name:
+      "Apoio a Eventos",
+    summary:
+      "Oferece auxílio financeiro para estudantes de graduação presencial em vulnerabilidade social. O benefício ajuda a custear a participação em eventos técnico-científicos, artísticos ou esportivos nacionais e internacionais. As inscrições e a seleção ocorrem de forma online através do sistema SisBol da universidade.",
+    type:
+      "Auxílio Financeiro",
+    value:
+      "R$300,00 ou R$1000,00",
+    duration:
+      "Parcela única",
+    enrollment:
+      "2026.2",
+
+    criteria:
+`- Graduação presencial
+- Inscrito em no mínimo 1 disciplina
+- Atender a pelo menos um dos requisitos: estudante de escola pública ou bolsista integral da rede privada, ingressante por ação afirmativa, em situação de vulnerabilidade, pessoa com deficiência, oriundo de acolhimento institucional, quilombola, indígena, de comunidade tradicional, estrangeiro em vulnerabilidade ou refugiado.`,
+
+    accumulation:
+      "Acumulável com qualquer bolsa ou auxílio da PROAES.",
+
+    rules: {
+      modality: "undergrad",
+      subjects: [
+        "1",
+        "2to3",
+        "4plus"
+      ]
+    }
+  }
+];
+
+const labels = {
+  modality:
+    "modalidade presencial indicada",
+  period:
+    "período informado",
+  subjects:
+    "número de disciplinas inscritas",
+  income:
+    "renda familiar per capita",
+  outside:
+    "campus fora de Niterói",
+  RU:
+    "campus sem Restaurante Universitário",
+  resident:
+    "moradia estudantil",
+  affirmative:
+    "modalidade de ação afirmativa",
+  disability:
+    "condição de deficiência/neurodivergência",
+  refugee:
+    "situação de refúgio/migração humanitária",
+  child:
+    "filho menor de 6 anos",
+  pregnant:
+    "gestação ou puerpério"
+};
+
+function profile() {
+  return Object.fromEntries(
+    [...document.querySelectorAll(
+        "select:not(#sort)")].map(el => [
+        el.id,
+        el.value
+      ]));
+}
+
+function assess(program,p) {
+  const mismatches = [];
+  const missing = [];
+  Object.entries(program.rules).forEach(
+    ([key, expected]) => {
+      const value = p[key];
+      const matches =
+        Array.isArray(expected)
+          ? expected.includes(value)
+          : value === expected;
+      if (value === undefined || value === "unknown") {
+        missing.push(labels[key]);
+      }
+      else if (!matches) {
+        mismatches.push(labels[key]);
+      }
+    }
+  );
+
+  if (mismatches.length) {
+    return {
+      state:
+        "check",
+      label:
+        "Verificar edital",
+      reasons: [
+        "Os filtros informados não correspondem a: "
+        +
+        mismatches.join(", ")
+        +
+        "."
+      ]
+    };
+  }
+
+  if (program.conditional) {
+    const reasons = [];
+    if (missing.length) {
+      reasons.push(
+        "Falta informar ou confirmar: " + missing.join(", ") + "."
+      );
+    }
+
+    reasons.push(program.conditional);
+
+    return {state: "check", label: "Verificar edital", reasons};
+  }
+
+  if (missing.length) {
+    return {
+      state:
+        "good",
+      label:
+        "Possivelmente elegível",
+      reasons: [
+        "Os critérios conhecidos preenchidos são compatíveis com este programa.",
+        "Falta informar ou confirmar: "
+        +
+        missing.join(", ")
+        +
+        "."
+      ]
+    };
+  }
+
+  return {
+    state: "good",
+    label: "Possivelmente elegível",
+    reasons: [
+      "Os critérios conhecidos preenchidos são compatíveis com este programa.",
+      "Confirme as condições completas, vagas e disponibilidade no edital."
+    ]
+  };
+
+}
+
+function valueNumber(text) {
+
+  const found = text.match(/[\d.]+(?:,\d+)?/g);
+
+  return found
+
+    ? Math.max(
+        ...found.map(
+          x =>
+            Number(
+              x
+                .replace(".", "")
+                .replace(",", ".")
+            )
+        )
+      )
+    : 0;
+}
+
+function render() {
+
+  const p = profile();
+
+  let list = programs.map((program, index) => ({
+    program,
+    index,
+    ...assess(program, p)
+  }));
+
+  const sort = document.getElementById("sort").value;
+
+  if (sort === "value") {
+    list.sort(
+      (a, b) =>
+        valueNumber(
+          b.program.value
+        )
+        -
+        valueNumber(
+          a.program.value
+        )
+    );
+  }
+
+  if (sort === "duration") {
+    const durationRank = (duration) => {
+      const text = duration.toLowerCase();
+      // Regra específica: "Parcela única + 6 meses" fica acima de "1 semestre".
+      if (text.includes("parcela única + 6 meses")) return 6.5;
+      if (text.includes("2 semestres")) return 12;
+      if (text.includes("11 meses")) return 11;
+      if (text.includes("fim do ano letivo")) return 6;
+      if (text.includes("1 semestre")) return 6;
+      if (text.includes("parcela única")) return 0;
+      return 0;
+    };
+
+    list.sort(
+      (a, b) =>
+        durationRank(b.program.duration)
+        -
+        durationRank(a.program.duration)
+        ||
+        a.index - b.index
+    );
+  }
+
+  if (onlyEligible) {
+    list = list.filter(
+        x =>
+          x.state === "good"
+      );
+  }
+
+  document
+    .getElementById("count-good")
+    .textContent =
+      list.filter(
+        x =>
+          x.state === "good"
+      ).length;
+
+  document
+    .getElementById("count-total")
+    .textContent =
+      programs.length;
+
+  const emptyState = document.getElementById("empty-state");
+
+  if (onlyEligible && list.length === 0) {
+    emptyState.textContent = "Nenhum programa foi classificado como possivelmente elegível com os filtros atuais.";
+    emptyState.style.display = "block";
+  }
+
+  else 
+    emptyState.style.display = "none";
+
+  const target = document.getElementById("results");
+
+  target.innerHTML = "";
+
+  const template = document.getElementById("result-template");
+
+  list.forEach(
+    item => {
+
+      const node = template.content.cloneNode(true);
+
+      const card = node.querySelector("article");
+      card.classList.add(item.state);
+
+      const status = node.querySelector(".status");
+      status.textContent = item.label;
+      status.classList.add("status-" + item.state);
+
+      const availability = node.querySelector(".availability-dot");
+
+      const period = item.program.enrollment;
+
+      let availabilityClass = "availability-red";
+
+      if (period.includes("2026.2"))
+        availabilityClass = "availability-green";
+
+      else if (/2025/.test(period)) 
+        availabilityClass = "availability-yellow";
+
+      availability.classList.add(availabilityClass);
+      availability.setAttribute("title", availabilityClass === "availability-green" ? "Recente ou em andamento" : availabilityClass === "availability-yellow" ? "Última chamada em 2025" : "Última chamada em 2024 ou anterior");
+
+      node.querySelector(".name-text").textContent = item.program.name;
+      node.querySelector(".summary").textContent = item.program.summary;
+
+      const typeContainer = node.querySelector(".result-tags");
+      const typeNode = node.querySelector(".type");
+      typeNode.textContent = item.program.type;
+
+      (item.program.tags || []).forEach(tag => {
+        const tagNode = typeNode.cloneNode(true);
+        tagNode.textContent = tag;
+        typeContainer.appendChild(tagNode);
+      });
+
+      node.querySelector(".value").textContent = item.program.value;
+      node.querySelector(".duration-summary").textContent = item.program.duration;
+      node.querySelector(".enrollment").textContent = item.program.enrollment;
+      node.querySelector(".criteria").textContent = item.program.criteria;
+      node.querySelector(".accumulation").textContent = item.program.accumulation;
+      node.querySelector(".official-link").href = getOfficialLink(item.program);
+
+      const btn = node.querySelector(".details-btn");
+      const details = node.querySelector(".details");
+
+      btn.addEventListener(
+        "click",
+        () => {
+          const hidden = details.classList
+              .toggle("hidden");
+
+          btn.setAttribute("aria-expanded", String(!hidden));
+
+          btn.querySelector(".details-open")
+            .classList
+            .toggle("hidden", !hidden);
+
+          btn.querySelector(".details-close")
+            .classList
+            .toggle("hidden", hidden);
+
+          const icon = btn.querySelector("svg");
+
+          if (icon)
+            icon.style.transform = hidden ? "" : "rotate(180deg)";
+        }
+      );
+      target.appendChild(node);
+    }
+  );
+  lucide.createIcons();
+}
+
+document
+  .getElementById("eligibility-form")
+  .addEventListener(
+    "submit",
+    e => {
+      e.preventDefault();
+
+      const p = profile();
+
+      const filled =
+        Object.values(p)
+          .some(
+            value =>
+              value !== "unknown"
+          );
+
+      onlyEligible = filled;
+
+      document.getElementById("validation-message")
+        .textContent =
+          filled
+            ? "Triagem atualizada com base nos filtros informados. Apenas os programas possivelmente elegíveis permanecem disponíveis para visualização."
+            : "Preencha ao menos um campo para uma triagem mais útil. Sem filtros, os resultados exigem verificação no edital.";
+
+      document
+        .getElementById("empty-state")
+        .style.display = "none";
+
+      render();
+    }
+  );
+
+document
+  .getElementById("clear-btn")
+  .addEventListener(
+    "click",
+    () => {
+      onlyEligible = false;
+
+      document
+        .querySelectorAll("select:not(#sort)")
+        .forEach(
+          select => {
+            select.value = "unknown";
+          }
+        );
+
+      document
+        .getElementById("validation-message")
+        .textContent = "Filtros limpos.";
+
+      render();
+    }
+  );
+
+document
+  .getElementById("sort")
+  .addEventListener("change", render);
+
+render();
+
+lucide.createIcons();
+
+</script>
+
+<section class="about-section" aria-labelledby="about-heading">
+  <div class="about-inner">
+    <header class="about-heading">
+      <p class="about-eyebrow">Projeto de extensão Include Meninas UFF</p>
+      <h2 id="about-heading">Quem está por trás dessa ideia?</h2>
+      <p class="about-lead">
+        O <strong>Verificador de Elegibilidade para Auxílios Estudantis da UFF</strong> é uma iniciativa desenvolvida no âmbito do <strong>Include Meninas UFF</strong>, projeto de extensão apoiado pela <strong>Pró-Reitoria de Extensão da Universidade Federal Fluminense (PROEX/UFF)</strong>, registrado no SIAEX sob o nº <strong>339.1.2024</strong>, que incentiva a participação e a formação de meninas e mulheres na Computação.
+      </p>
+    </header>
+
+    <div class="about-story-grid">
+      <article class="about-story-block">
+        <h3>Como tudo começou?</h3>
+        <p>
+          A ideia surgiu a partir de uma escuta pública realizada no estande <strong>“Central de Soluções para a Permanência de Diferentes Mulheres na Computação”</strong>, durante a 78ª Reunião Anual da Sociedade Brasileira para o Progresso da Ciência (SBPC). A atividade esteve relacionada à pesquisa de doutorado de Tainá Guimarães de Souza, intitulada <em>“Estruturando Iniciativas de Incentivo com Perspectivas Interseccionais para a Permanência e Formação de Mulheres na Computação”</em>.
+        </p>
+        <p>
+          Entre as questões levantadas, destacou-se a dificuldade de encontrar informações sobre bolsas e auxílios estudantis já oferecidos pela universidade. Essa constatação motivou a criação de uma ferramenta digital que reúne essas informações e facilita a identificação de benefícios potencialmente compatíveis com o perfil de cada estudante.
+        </p>
+        <p>
+          Embora tenha surgido de uma pesquisa sobre a permanência de mulheres na Computação, a iniciativa reconhece que as barreiras de acesso à informação ultrapassam as questões de gênero. Por isso, a ferramenta foi pensada para toda a comunidade estudantil, contribuindo para aproximar os estudantes das oportunidades disponíveis na universidade.
+        </p>
+      </article>
+
+      <article class="about-story-block">
+        <h3>Quem fez acontecer?</h3>
+        <p>
+          O desenvolvimento da ferramenta reuniu pesquisadoras e bolsistas de iniciação científica do <strong>Include Meninas UFF</strong>, articulando pesquisa, extensão universitária e formação prática em Computação.
+        </p>
+      </article>
+    </div>
+
+    <section class="team-section" aria-labelledby="team-heading">
+      <div class="team-heading">
+        <h3 id="team-heading">Nossa equipe</h3>
+      </div>
+      <div class="team-grid">
+        <article class="team-member">
+          <div class="team-photo-placeholder" role="img" aria-label="Luciana Cardoso de Castro Salgado"></div>
+          <h4>Luciana Cardoso de Castro Salgado</h4>
+          <p><em>Coordenadora do Include Meninas UFF.</em></p>
+          <p><em>Professora Doutora do Instituto de Computação da UFF.</em></p>
+        </article>
+        <article class="team-member">
+          <div class="team-photo-placeholder" role="img" aria-label="Tainá Guimarães de Souza"></div>
+          <h4>Tainá Guimarães de Souza</h4>
+          <p><em>Doutoranda em Computação pela UFF — coordenadora do desenvolvimento da ferramenta.</em></p>
+          <p><em>Bolsista FAPERJ.</em></p>
+        </article>
+        <article class="team-member">
+          <div class="team-photo-placeholder" role="img" aria-label="Camille Moraes"></div>
+          <h4>Camille Moraes</h4>
+          <p><em>Bolsista de Iniciação Científica — levantamento de requisitos, desenvolvimento do site e design da interface.</em></p>
+          <p><em>Bolsista CNPq.</em></p>
+        </article>
+        <article class="team-member">
+          <div class="team-photo-placeholder" role="img" aria-label="Maria Eduarda Vicentini"></div>
+          <h4>Maria Eduarda Vicentini</h4>
+          <p><em>Bolsista de Iniciação Científica — levantamento de requisitos, desenvolvimento do site e design da interface.</em></p>
+          <p><em>Bolsista FAPERJ.</em></p>
+        </article>
+        <article class="team-member">
+          <div class="team-photo-placeholder" role="img" aria-label="Victória Carvalho"></div>
+          <h4>Victória Carvalho</h4>
+          <p><em>Bolsista de Iniciação Científica — levantamento de requisitos da ferramenta.</em></p>
+          <p><em>Bolsista PROEX/UFF.</em></p>
+        </article>
+      </div>
+    </section>
+  </div>
+</section>
+
+<section class="partners-section" aria-label="Instituições e apoios">
+  <div class="partners-inner">
+    <p class="partners-title">Apoios</p>
+    <div class="partners-grid">
+      <a href="https://meninas.sbc.org.br/renacee_md/" target="_blank" rel="noopener noreferrer" class="partner-logo-card partner-logo-card--renacee" style="background-color: #ffffff;">
+        <img src="renacee.png" alt="Renacee" />
+      </a>
+      <a href="https://www.uff.br/" target="_blank" rel="noopener noreferrer" class="partner-logo-card partner-logo-card--uff" style="background-color: #ffffff;">
+        <img src="brasao_uff.png" alt="UFF" />
+      </a>
+      <a href="https://www.uff.br/proex/" target="_blank" rel="noopener noreferrer" class="partner-logo-card partner-logo-card--proex" style="background-color: #ffffff;">
+        <img src="proex.png" alt="PROEX" />
+      </a>
+      <a href="https://www.faperj.br/" target="_blank" rel="noopener noreferrer" class="partner-logo-card partner-logo-card--faperj" style="background-color: #ffffff;">
+        <img src="faperj.png" alt="FAPERJ" />
+      </a>
+      <a href="https://www.gov.br/cnpq/pt-br" target="_blank" rel="noopener noreferrer" class="partner-logo-card partner-logo-card--cnpq" style="background-color: #ffffff;">
+        <img src="cnpq.png" alt="CNPQ" />
+      </a>
+    </div>
+  </div>
+</section>
+</body>
+</html>
